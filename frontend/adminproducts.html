@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Homepage</title>
+    <link rel="stylesheet" href="./css/admincss.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">
+        <img src="./img/admin.jpg" alt="Admin Logo">
+        <h2>Admin Dashboard</h2>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#" onclick="openPage('dashboard')">Dashboard</a></li>
+        <li><a href="#" onclick="openPage('category')">Category</a></li>
+        <li><a href="#" class="optionselected" onclick="openPage('products')">Products</a></li>
+        <li><a href="#" onclick="openPage('orders')">Orders</a></li>
+        <li><a href="#" onclick="openPage('customers')">Customers</a></li>
+        <li><a href="#" class="logoutbutton" onclick="openPage('logout')">Logout</a></li>
+    </ul>
+</div>
+<div class="container">
+    <h1>Welcome, Admin!</h1>
+    <div class="flight-list">
+        <h2>List of Products</h2>
+        <table id="productstable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th></th> <!-- For the delete icon column -->
+            </tr>
+            </thead>
+            <tbody id="ProductTableBody">
+            <!-- Table rows will be dynamically populated here -->
+            </tbody>
+            <!-- Add more flights here -->
+            </tbody>
+        </table>
+    </div>
+    <button class="add-button" onclick="showAddNewProductModal()">Add New Product</button>
+</div>
+
+<!-- Modal Popup for Password Change -->
+<div id="passwordChangeModal" class="modal hidden">
+    <div class="modal-content">
+        <form>
+            <label>Add NewProduct:</label>
+            <input type="text" id="pname" placeholder="Product Name" required>
+            <select class="customlistbox" id="pcatid" name="pcatid" placeholder="Product Category">
+
+            </select>
+            <input type="text" id="pdescription" placeholder="Product Description" required>
+            <span id="charCount" class="char-count">20</span>
+            <input type="number" id="pprice" placeholder="Product Price" required>
+            <input type="text" id="pimageurl" placeholder="Product Image" required>
+            <input type="number" id="pquantity" placeholder="Product Quantity" required>
+            <button type="button"  onclick="CreateNewProduct()">Save</button>
+            <button type="button" onclick="closeCreateProduct()">Cancel</button>
+        </form>
+    </div>
+</div>
+<script src="./js/adminproduct.js"></script>
+</body>
+</html>

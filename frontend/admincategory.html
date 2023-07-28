@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Homepage</title>
+    <link rel="stylesheet" href="./css/admincss.css">
+    <link rel="stylesheet" href="./css/admincategory.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">
+        <img src="./img/admin.jpg" alt="Admin Logo">
+        <h2>Admin Dashboard</h2>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#" onclick="openPage('dashboard')">Dashboard</a></li>
+        <li><a href="#" class="optionselected" onclick="openPage('category')">Category</a></li>
+        <li><a href="#"  onclick="openPage('products')">Products</a></li>
+        <li><a href="#"  onclick="openPage('orders')">Orders</a></li>
+        <li><a href="#"  onclick="openPage('customers')">Customers</a></li>
+        <li><a href="#" class="logoutbutton" onclick="openPage('logout')">Logout</a></li>
+    </ul>
+</div>
+<div class="container">
+    <h1>Category Details</h1>
+    <div class="flight-list">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search categories...">
+        </div>
+
+        <div class="category-list">
+            <h2>Existing Categories</h2>
+            <ul id="categoryUl">
+
+            </ul>
+        </div>
+
+    </div>
+    <button class="add-button" onclick="openAddCategoryForm()">Add New Category</button>
+
+    <!-- Modal Popup for Password Change -->
+    <div id="passwordChangeModal" class="modal hidden">
+        <div class="modal-content">
+            <form>
+                <label for="newcategoryname">New Category:</label>
+                <input type="text" id="newcategoryname" required>
+                <button type="button"  onclick="CreateNewCategory()">Save</button>
+                <button type="button" onclick="closeCreateCategory()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+<script src="./js/admincategory.js"></script>
+</body>
+</html>

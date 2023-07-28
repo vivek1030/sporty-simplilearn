@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Homepage</title>
+    <link rel="stylesheet" href="./css/admincss.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">
+        <img src="./img/admin.jpg" alt="Admin Logo">
+        <h2>Admin Dashboard</h2>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#" onclick="openPage('dashboard')" class="optionselected">Dashboard</a></li>
+        <li><a href="#" onclick="openPage('category')">Category</a></li>
+        <li><a href="#"  onclick="openPage('products')">Products</a></li>
+        <li><a href="#"  onclick="openPage('orders')">Orders</a></li>
+        <li><a href="#"  onclick="openPage('customers')">Customers</a></li>
+        <li><a href="#" class="logoutbutton" onclick="openPage('logout')">Logout</a></li>
+    </ul>
+</div>
+<div class="container">
+    <h1>Welcome, Admin!</h1>
+    <div class="message-container">
+        <div class="message-content">
+            <p>Welcome to our exclusive admin dashboard for the premium shoe eCommerce website! As an admin, you hold the key to unlocking the full potential of our online store. With powerful tools and features at your fingertips, you have the authority to manage every aspect of the website and ensure a seamless shopping experience for our valued customers.</p>
+            <p>Here, you can effortlessly oversee product listings, update inventory, and track sales performance. Stay informed with real-time analytics and gain valuable insights into customer behavior and preferences. With a user-friendly interface, managing orders and handling customer queries becomes a breeze.</p>
+            <p>As an integral part of our team, your dedication and expertise are crucial in maintaining our reputation for providing top-notch footwear and exceptional service. Together, we can elevate our customers' shopping journey and build lasting relationships with our loyal clientele.</p>
+            <p>Thank you for being an essential part of our eCommerce success story. Your hard work and commitment are instrumental in shaping our brand's future. Keep up the great work, and together, let's take our shoe eCommerce website to new heights!</p>
+        </div>
+        <p class="message-signature">Best regards,<br>Sporty Shoes.</p>
+    </div>
+</div>
+
+<!-- Add Flight Form (hidden by default) -->
+<div class="add-flight-form" id="addFlightForm">
+    <h2>Add New Flight</h2>
+    <form>
+        <label for="flightName">Flight Name:</label>
+        <input type="text" id="flightName" required>
+
+        <label for="source">Source:</label>
+        <select class="customlistbox" name="source" id="source">
+        </select>
+
+        <label for="destination">Destination:</label>
+        <select class="customlistbox" name="destination" id="destination">
+
+        </select>
+
+        <label for="capacity">Capacity:</label>
+        <input class="customlistbox" type="number" id="capacity" required>
+
+        <label for="airline">Airline:</label>
+        <select class="customlistbox" name="airline" id="airline">
+
+        </select>
+
+        <label for="date">Date:</label>
+        <input class="customlistbox" type="date" id="date" required>
+
+        <label for="price">Price:</label>
+        <input class="customlistbox" type="number" id="price" required>
+        <!-- Add more input fields as needed -->
+        <button type="button" onclick="AddNewFlightDetails()">Save</button>
+    </form>
+    <button class="cancel-button" onclick="closeAddFlightForm()">Cancel</button>
+</div>
+
+<script>
+
+    window.onload = function () {
+        // getSourceAndDestinations();
+        // getAirlines();
+        // showPasswordChangeModal();
+        // getAllFlightDetails();
+    };
+
+    function getAllFlightDetails(){
+        fetch("http://localhost:9192/completeflightdetails", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status_code == 200){
+                    var source_name = "";
+                    var des_name = "";
+                    const tableBody = document.getElementById('flightTableBody');
+                    tableBody.innerHTML = '';
+                    data.data.forEach((flight, index) => {
+                        const newRow = tableBody.insertRow();
+                        const flightNameCell = newRow.insertCell();
+                        flightNameCell.textContent = flight.name;
+
+                        const routeCell = newRow.insertCell();
+                        routeCell.textContent = flight.source + " -> " + flight.destination;
+
+                        const airlines = newRow.insertCell();
+                        airlines.textContent = flight.airline;
+
+                        const price = newRow.insertCell();
+                        price.textContent = flight.price;
+
+                        const time = newRow.insertCell();
+                        time.textContent = flight.time;
+
+                        const deleteCell = newRow.insertCell();
+                        const deleteIcon = document.createElement('i');
+                        deleteIcon.classList.add('fas', 'fa-trash-alt');
+                        deleteIcon.onclick = () => deleteFlight(flight.id); // Call the deleteFlight function with the row index
+                        deleteCell.appendChild(deleteIcon);
+                    });
+                }else{
+                    alert("Authentication failed!");
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                alert("Something went wrong!");
+            });
+    }
+
+    function openAddFlightForm() {
+        document.getElementById("addFlightForm").style.display = "block";
+    }
+
+    function saveNewAdminPassword(){
+        var new_admin_password = document.getElementById("newPassword").value;
+        const data = {
+            password: new_admin_password
+        };
+
+        fetch("http://localhost:9192/admin", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status_code == 200){
+                    closePasswordChangeModal();
+                    alert("Password Updated");
+                }else{
+                    alert("Authentication failed!");
+                }
+            })
+            .catch(error => {
+                alert("Something went wrong!");
+            });
+
+    }
+
+    function clearAddFlightForms(){
+        document.getElementById("flightName").value = "";
+        document.getElementById("capacity").value = "";
+        document.getElementById("source").value="";
+        document.getElementById("airline").value="";
+        document.getElementById("destination").value="";
+        document.getElementById("date").value="";
+        document.getElementById("price").value="";
+    }
+
+    function AddNewFlightDetails(){
+        const data = {
+            name: document.getElementById("flightName").value,
+            capacity: document.getElementById("capacity").value,
+            sourceid: document.getElementById("source").value,
+            airlineid: document.getElementById("airline").value,
+            destinationid: document.getElementById("destination").value,
+            time: document.getElementById("date").value,
+            price: document.getElementById("price").value
+        }
+
+        fetch("http://localhost:9192/flights", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status_code == 200){
+                    closeAddFlightForm();
+                    clearAddFlightForms();
+                    getAllFlightDetails();
+                }else{
+                    alert("Authentication failed!");
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                alert("Something went wrong!");
+            });
+
+    }
+
+    function closeAddFlightForm() {
+        document.getElementById("addFlightForm").style.display = "none";
+    }
+
+    function deleteFlight(id) {
+        fetch("http://localhost:9192/flight/" + id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status_code == 200){
+                    getAllFlightDetails();
+                }else{
+                    alert("Authentication failed!");
+                }
+            })
+            .catch(error => {
+                alert("Something went wrong!");
+            });
+    }
+
+    function getSourceAndDestinations(){
+        fetch("http://localhost:9192/masterplaces", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status_code == 200){
+                    masterListOfPlaces = data.data;
+                    const selectElement = document.getElementById('source');
+                    const selectElementdes = document.getElementById('destination');
+                    selectElement.innerHTML = '';
+                    selectElementdes.innerHTML = '';
+                    data.data.forEach((source) => {
+                        const option = document.createElement('option');
+                        option.textContent = source.name;
+                        option.value = source.id;
+                        selectElement.appendChild(option);
+                    });
+                    data.data.forEach((source) => {
+                        const option = document.createElement('option');
+                        option.textContent = source.name;
+                        option.value = source.id;
+                        selectElementdes.appendChild(option);
+                    });
+                }else{
+                    alert("Authentication failed!");
+                }
+            })
+            .catch(error => {
+                alert("Something went wrong!");
+            });
+    }
+    function getAirlines(){
+        fetch("http://localhost:9192/airlines", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status_code == 200){
+                    const selectElement = document.getElementById('airline');
+                    selectElement.innerHTML = '';
+                    data.data.forEach((airline) => {
+                        const option = document.createElement('option');
+                        option.textContent = airline.airlinename;
+                        option.value = airline.id;
+                        selectElement.appendChild(option);
+                    });
+                }else{
+                    alert("Authentication failed!");
+                }
+            })
+            .catch(error => {
+                alert("Something went wrong!");
+            });
+    }
+
+    function showPasswordChangeModal() {
+        const modal = document.getElementById("passwordChangeModal");
+        modal.style.display = "block";
+    }
+
+    function closePasswordChangeModal() {
+        const modal = document.getElementById("passwordChangeModal");
+        modal.style.display = "none";
+    }
+
+    function openPage(pagename){
+        switch (pagename){
+            case "category":
+                window.location.href = "./admincategory.html";
+                break;
+            case "products":
+                window.location.href = "./adminproducts.html";
+                break;
+            case "orders":
+                window.location.href = "./adminorders.html";
+                break;
+            case "customers":
+                window.location.href = "./admincustomers.html";
+                break;
+            case "dashboard":
+                window.location.href = "./adminhomepage.html";
+                break;
+            case "logout":
+                window.location.href = "./adminlogin.html";
+                break;
+        }
+    }
+
+</script>
+</body>
+</html>
